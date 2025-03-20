@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 import 'password_success_screen.dart';
 
@@ -13,7 +14,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  bool _obscurePassword = tr ue;
+  bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
   @override
@@ -25,7 +26,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
   void _onSave() {
     if (_formKey.currentState!.validate()) {
-      Navigator.of(context).pushReplacement(
+      Navigator.pushReplacement(
+        context,
         MaterialPageRoute(
           builder: (context) => const PasswordSuccessScreen(),
         ),
@@ -36,22 +38,22 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Create Password',
-          style: TextStyle(
-            color: AppColors.black,
+          style: GoogleFonts.inter(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
           ),
         ),
-        centerTitle: true,
       ),
       body: SafeArea(
         child: Padding(
@@ -61,9 +63,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'New Password',
-                  style: TextStyle(
+                  style: GoogleFonts.inter(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -71,9 +73,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'Enter your new password and remember it.',
-                  style: TextStyle(
-                    color: AppColors.grey,
+                  style: GoogleFonts.inter(
                     fontSize: 16,
+                    color: AppColors.grey,
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -82,12 +84,27 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    border: const OutlineInputBorder(),
+                    labelStyle: GoogleFonts.inter(color: AppColors.grey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: AppColors.grey.withOpacity(0.3)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: AppColors.grey.withOpacity(0.3)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppColors.primary),
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_off
                             : Icons.visibility,
+                        color: AppColors.grey,
                       ),
                       onPressed: () {
                         setState(() {
@@ -112,12 +129,27 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   obscureText: _obscureConfirmPassword,
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
-                    border: const OutlineInputBorder(),
+                    labelStyle: GoogleFonts.inter(color: AppColors.grey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: AppColors.grey.withOpacity(0.3)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: AppColors.grey.withOpacity(0.3)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppColors.primary),
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscureConfirmPassword
                             ? Icons.visibility_off
                             : Icons.visibility,
+                        color: AppColors.grey,
                       ),
                       onPressed: () {
                         setState(() {
@@ -136,10 +168,26 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     return null;
                   },
                 ),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: _onSave,
-                  child: const Text('Save'),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _onSave,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: Text(
+                      'Save',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -149,4 +197,3 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     );
   }
 }
-
