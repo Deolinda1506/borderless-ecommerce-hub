@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 import 'new_password_screen.dart';
 
 class ForgotPasswordVerificationScreen extends StatefulWidget {
-  const ForgotPasswordVerificationScreen({super.key});
+  final String email;
+
+  const ForgotPasswordVerificationScreen({
+    super.key,
+    required this.email,
+  });
 
   @override
   State<ForgotPasswordVerificationScreen> createState() =>
@@ -12,57 +18,89 @@ class ForgotPasswordVerificationScreen extends StatefulWidget {
 
 class _ForgotPasswordVerificationScreenState
     extends State<ForgotPasswordVerificationScreen> {
-  final List<TextEditingController> _controllers =
-      List.generate(4, (index) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(4, (index) => FocusNode());
+  final List<String> _code = ['', '', '', ''];
+  int _currentIndex = 0;
 
-  @override
-  void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
+  void _onKeyPressed(String value) {
+    if (_currentIndex < 4) {
+      setState(() {
+        _code[_currentIndex] = value;
+        _currentIndex++;
+      });
+
+      if (_currentIndex == 4) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NewPasswordScreen(),
+          ),
+        );
+      }
     }
-    for (var node in _focusNodes) {
-      node.dispose();
-    }
-    super.dispose();
   }
 
-  void _onCodeChanged(String value, int index) {
-    if (value.length == 1 && index < 3) {
-      _focusNodes[index + 1].requestFocus();
+  void _onBackspace() {
+    if (_currentIndex > 0) {
+      setState(() {
+        _currentIndex--;
+        _code[_currentIndex] = '';
+      });
     }
   }
 
-  void _onProceed() {
-    String code = _controllers.map((c) => c.text).join();
-    if (code.length == 4) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const NewPasswordScreen(),
+  void _onClear() {
+    setState(() {
+      for (int i = 0; i < 4; i++) {
+        _code[i] = '';
+      }
+      _currentIndex = 0;
+    });
+  }
+
+  Widget _buildKeypadButton(String value) {
+    return Expanded(
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: TextButton(
+          onPressed: () => _onKeyPressed(value),
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
         ),
-      );
-    }
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Forgot Password',
-          style: TextStyle(
-            color: AppColors.black,
+          style: GoogleFonts.inter(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
           ),
         ),
-        centerTitle: true,
       ),
       body: SafeArea(
         child: Padding(
@@ -70,82 +108,185 @@ class _ForgotPasswordVerificationScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Email Verification',
-                style: TextStyle(
+                style: GoogleFonts.inter(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Enter the 4-digit verification code sent to your email address.',
-                style: TextStyle(
-                  color: AppColors.grey,
+                'Enter the 4-digit verification code send to your email address.',
+                style: GoogleFonts.inter(
                   fontSize: 16,
+                  color: AppColors.grey,
                 ),
               ),
               const SizedBox(height: 32),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: List.generate(
                   4,
                   (index) => Container(
                     width: 64,
                     height: 64,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: TextFormField(
-                      controller: _controllers[index],
-                      focusNode: _focusNodes[index],
-                      keyboardType: TextInputType.number,
-                      maxLength: 1,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 24),
-                      decoration: InputDecoration(
-                        counterText: '',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: AppColors.grey.withOpacity(0.3),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: AppColors.grey.withOpacity(0.3),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: AppColors.primary,
-                          ),
+                    margin: EdgeInsets.only(
+                      right: index < 3 ? 16 : 0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _currentIndex == index
+                            ? AppColors.primary
+                            : AppColors.grey.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        _code[index],
+                        style: GoogleFonts.inter(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onChanged: (value) => _onCodeChanged(value, index),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: () {
+                    // TODO: Implement resend code
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 0),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    'Resend Code',
+                    style: GoogleFonts.inter(
+                      color: AppColors.primary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 24),
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    // Implement resend code logic
-                  },
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        _buildKeypadButton('1'),
+                        const SizedBox(width: 16),
+                        _buildKeypadButton('2'),
+                        const SizedBox(width: 16),
+                        _buildKeypadButton('3'),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        _buildKeypadButton('4'),
+                        const SizedBox(width: 16),
+                        _buildKeypadButton('5'),
+                        const SizedBox(width: 16),
+                        _buildKeypadButton('6'),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        _buildKeypadButton('7'),
+                        const SizedBox(width: 16),
+                        _buildKeypadButton('8'),
+                        const SizedBox(width: 16),
+                        _buildKeypadButton('9'),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: TextButton(
+                              onPressed: _onBackspace,
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.backspace_outlined,
+                                color: AppColors.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        _buildKeypadButton('0'),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: TextButton(
+                              onPressed: _onClear,
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                'C',
+                                style: GoogleFonts.inter(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _currentIndex == 4 ? () {} : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
                   child: Text(
-                    'Resend Code',
-                    style: TextStyle(
-                      color: AppColors.primary,
+                    'Proceed',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-              ),
-              const Spacer(),
-              ElevatedButton(
-                onPressed: _onProceed,
-                child: const Text('Proceed'),
               ),
             ],
           ),
@@ -154,4 +295,3 @@ class _ForgotPasswordVerificationScreenState
     );
   }
 }
-
