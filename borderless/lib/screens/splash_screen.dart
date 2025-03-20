@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 import 'onboarding_screen.dart';
 
@@ -30,19 +31,10 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _controller.forward().then((_) {
-      Future.delayed(const Duration(seconds: 1), () {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const OnboardingScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 500),
-          ),
-        );
-      });
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+      );
     });
   }
 
@@ -55,27 +47,29 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.white,
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
-          child: Row(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'B',
-                style: TextStyle(
+                'BORDERLESS',
+                style: GoogleFonts.inter(
                   color: AppColors.primary,
-                  fontSize: 48,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
                 ),
               ),
-              const Text(
-                'orderless',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 24),
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                 ),
               ),
             ],
@@ -85,4 +79,3 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 }
-
