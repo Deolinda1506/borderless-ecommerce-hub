@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(20, 20) scale(0.8)">
+    <!-- Shopping Bag -->
+    <rect x="40" y="60" width="120" height="100" rx="10" fill="#7FFFD4"/>
+    <path d="M70 60V40C70 30 80 20 100 20C120 20 130 30 130 40V60" stroke="#000000" stroke-width="8"/>
+    <!-- Dollar Sign -->
+    <circle cx="150" cy="50" r="25" fill="#FFD700"/>
+    <path d="M150 35V65M145 40H155M145 60H155" stroke="#000000" stroke-width="4"/>
+    <!-- Stars -->
+    <path d="M30 30L35 35L40 30L35 25L30 30Z" fill="#FFD700"/>
+    <path d="M160 140L165 145L170 140L165 135L160 140Z" fill="#FFD700"/>
+    <path d="M40 150L45 155L50 150L45 145L40 150Z" fill="#FFD700"/>
+  </g>
+</svg> 

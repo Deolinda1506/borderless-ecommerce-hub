@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(20, 20) scale(0.8)">
+    <!-- Credit Card -->
+    <rect x="30" y="60" width="140" height="90" rx="10" fill="#7FFFD4"/>
+    <rect x="40" y="80" width="120" height="10" fill="#000000"/>
+    <circle cx="60" cy="120" r="15" fill="#FFD700"/>
+    <!-- Shield -->
+    <path d="M140 40L160 40L160 70C160 90 150 100 140 105C130 100 120 90 120 70L120 40L140 40Z" fill="#9F7AEA"/>
+    <path d="M140 45L155 45L155 70C155 85 147.5 95 140 98C132.5 95 125 85 125 70L125 45L140 45Z" fill="#7FFFD4"/>
+    <!-- Check Mark -->
+    <path d="M135 65L140 70L145 60" stroke="#000000" stroke-width="3"/>
+    <!-- Stars -->
+    <path d="M40 30L45 35L50 30L45 25L40 30Z" fill="#FFD700"/>
+    <path d="M170 140L175 145L180 140L175 135L170 140Z" fill="#FFD700"/>
+    <path d="M50 150L55 155L60 150L55 145L50 150Z" fill="#FFD700"/>
+  </g>
+</svg> 
