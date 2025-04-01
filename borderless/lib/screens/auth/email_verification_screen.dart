@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'password_success_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../services/auth_service.dart';
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_event.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final bool isForgotPassword;
@@ -10,20 +13,19 @@ class EmailVerificationScreen extends StatefulWidget {
   });
 
   @override
-  State<EmailVerificationScreen> createState() =>
-      _EmailVerificationScreenState();
+  State<EmailVerificationScreen> createState() => _EmailVerificationScreenState();
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     with SingleTickerProviderStateMixin {
-  final List<TextEditingController> _controllers =
-      List.generate(6, (index) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
   late AnimationController _toastController;
   late Animation<double> _toastAnimation;
   bool _showToast = true;
   bool _isLoading = false;
   String? _error;
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -38,7 +40,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     );
     _toastController.forward();
 
-    // Show toast for 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         _toastController.reverse().then((_) {
@@ -68,12 +69,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
     }
   }
 
-  void _handleVerification() async {
+  Future<void> _handleVerification(String userId) async {
     final code = _controllers.map((controller) => controller.text).join();
 
     if (code.length != 6) {
       setState(() {
-        _error = 'Please enter all 6 digits';
+        _error = 'Please enter all 6 characters';
       });
       return;
     }
@@ -83,79 +84,63 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
       _error = null;
     });
 
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
+    final result = await _authService.verifyOTP(userId, code);
 
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
 
+      if (result['success'] == true) {
+        context.read<AuthBloc>().add(CheckAuth());
         if (widget.isForgotPassword) {
-          // Navigate to reset password screen for forgot password flow
           Navigator.pushReplacementNamed(context, '/reset-password');
         } else {
-          // Navigate to home screen for signup flow
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/home',
-            (route) => false,
-          );
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
         }
-      }
-    } catch (e) {
-      if (mounted) {
+      } else {
         setState(() {
-          _isLoading = false;
-          _error = 'Invalid verification code. Please try again.';
+          _error = result['error'] ?? 'Invalid verification code.';
         });
       }
     }
   }
 
-  void _handleResendCode() async {
+  Future<void> _handleResendCode(String userId, String email) async {
     setState(() {
       _isLoading = true;
     });
 
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
+    final result = await _authService.resendOTP(userId, email);
 
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        if (result != null && result.containsKey('otp')) {
           _showToast = true;
-        });
-        _toastController.forward();
+          _toastController.forward();
 
-        // Hide toast after 3 seconds
-        Future.delayed(const Duration(seconds: 3), () {
-          if (mounted) {
-            _toastController.reverse().then((_) {
-              setState(() {
-                _showToast = false;
+          Future.delayed(const Duration(seconds: 3), () {
+            if (mounted) {
+              _toastController.reverse().then((_) {
+                setState(() {
+                  _showToast = false;
+                });
               });
-            });
-          }
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _error = 'Failed to resend code. Please try again.';
-        });
-      }
+            }
+          });
+        } else {
+          _error = result?['error'] ?? 'Failed to resend code.';
+        }
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final email = args?['email'] as String? ?? '';
+    final userId = args?['userId'] as String? ?? '';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -168,11 +153,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    onTap: () => Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      '/home',
-                      (route) => false,
-                    ),
+                    onTap: () => Navigator.pop(context),
                     child: Row(
                       children: [
                         Text(
@@ -213,9 +194,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                       ),
                       const SizedBox(width: 16),
                       Text(
-                        widget.isForgotPassword
-                            ? 'Reset Password'
-                            : 'Verify Email',
+                        widget.isForgotPassword ? 'Reset Password' : 'Verify Email',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -250,18 +229,18 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: List.generate(
                       6,
-                      (index) => SizedBox(
+                          (index) => SizedBox(
                         width: 50,
                         height: 56,
                         child: TextFormField(
                           controller: _controllers[index],
                           focusNode: _focusNodes[index],
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.text,
                           textAlign: TextAlign.center,
                           enabled: !_isLoading,
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(1),
-                            FilteringTextInputFormatter.digitsOnly,
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9A-Z]')),
                           ],
                           decoration: InputDecoration(
                             filled: true,
@@ -273,9 +252,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: _error != null
-                                    ? Colors.red
-                                    : Colors.grey[200]!,
+                                color: _error != null ? Colors.red : Colors.grey[200]!,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -283,14 +260,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                               borderSide: BorderSide(color: Color(0xFF21D4B4)),
                             ),
                           ),
-                          onChanged: (value) {
-                            _onCodeChanged(value, index);
-                            if (_error != null) {
-                              setState(() {
-                                _error = null;
-                              });
-                            }
-                          },
+                          onChanged: (value) => _onCodeChanged(value, index),
                         ),
                       ),
                     ),
@@ -307,7 +277,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                         ),
                       ),
                       GestureDetector(
-                        onTap: !_isLoading ? _handleResendCode : null,
+                        onTap: !_isLoading ? () => _handleResendCode(userId, email) : null,
                         child: Text(
                           'Resend Code',
                           style: TextStyle(
@@ -326,7 +296,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: _isLoading ? null : _handleVerification,
+                      onPressed: _isLoading ? null : () => _handleVerification(userId),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
@@ -335,23 +305,20 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                       ),
                       child: _isLoading
                           ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
                           : Text(
-                              widget.isForgotPassword
-                                  ? 'Reset Password'
-                                  : 'Verify Email',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                        widget.isForgotPassword ? 'Reset Password' : 'Verify Email',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -365,10 +332,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen>
                 child: FadeTransition(
                   opacity: _toastAnimation,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: Color(0xFF21D4B4).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),

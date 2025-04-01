@@ -90,7 +90,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onCheckAuth(CheckAuth event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     try {
-      final user = _authService.currentUser; // No red line now
+      final user = _authService.currentUser;
       if (user != null) {
         emit(Authenticated(
           userId: user.uid,

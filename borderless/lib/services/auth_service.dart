@@ -1,23 +1,35 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:math';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:firebase_core/firebase_core.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFunctions _functions = FirebaseFunctions.instance;
 
-  // Getter for the current user
-  User? get currentUser => _auth.currentUser;
-
-  // Generate a 6-digit OTP
-  String _generateOTP() {
-    Random random = Random();
-    return (100000 + random.nextInt(900000)).toString(); // 6-digit OTP
+  AuthService() {
+    if (kIsWeb) {
+      _auth = FirebaseAuth.instanceFor(app: Firebase.app());
+    } else {
+      _auth = FirebaseAuth.instance;
+    }
   }
 
-  // Email/Password Sign-Up with OTP
+  User? get currentUser => _auth.currentUser;
+
+  String _generateOTP() {
+    const String chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    Random random = Random();
+    return String.fromCharCodes(
+      Iterable.generate(6, (_) => chars.codeUnitAt(random.nextInt(chars.length))),
+    );
+  }
+
   Future<Map<String, dynamic>?> signUpWithEmail(String email, String password, String fullName) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
@@ -26,14 +38,22 @@ class AuthService {
       );
       User? user = result.user;
       if (user != null) {
-        // Save user data to Firestore
         await createUser(user.uid, email, fullName);
         String otp = _generateOTP();
-        await user.sendEmailVerification(); // Sends Firebase verification link
-        print("Generated OTP for $email: $otp"); // Simulate OTP sending (replace with email service)
+
+        await _firestore.collection('otps').doc(user.uid).set({
+          'otp': otp,
+          'email': email,
+          'createdAt': FieldValue.serverTimestamp(),
+          'expiresAt': DateTime.now().add(Duration(minutes: 5)).millisecondsSinceEpoch,
+        });
+
+        final callable = _functions.httpsCallable('sendOTP');
+        await callable.call({'email': email, 'otp': otp});
+
         return {
           'user': user,
-          'otp': otp,
+          'otp': otp, // For debugging; remove in production
         };
       }
       return null;
@@ -57,22 +77,18 @@ class AuthService {
     }
   }
 
-  // Email/Password Sign-In
   Future<Map<String, dynamic>?> signInWithEmail(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      if (result.user != null && !result.user!.emailVerified) {
-        return {'error': 'Please verify your email first.'};
-      }
       return {'user': result.user};
     } on FirebaseAuthException catch (e) {
       String errorMessage;
       switch (e.code) {
         case 'user-not-found':
-          errorMessage = 'User account does not exist. Sign up instead.';
+          errorMessage = 'This email is not registered. Please sign up.';
           break;
         case 'wrong-password':
           errorMessage = 'Incorrect password.';
@@ -88,29 +104,38 @@ class AuthService {
     }
   }
 
-  // Google Sign-In
   Future<Map<String, dynamic>?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        return {'error': 'Google Sign-In cancelled by user.'}; // User cancelled
-      }
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      UserCredential result = await _auth.signInWithCredential(credential);
-      User? user = result.user;
-      if (user != null) {
-        // Check if user exists in Firestore, create if not
-        DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
-        if (!doc.exists) {
-          await createUser(user.uid, user.email ?? '', user.displayName ?? '');
+      if (kIsWeb) {
+        final provider = GoogleAuthProvider();
+        UserCredential result = await _auth.signInWithPopup(provider);
+        User? user = result.user;
+        if (user != null) {
+          DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
+          if (!doc.exists) {
+            await createUser(user.uid, user.email ?? '', user.displayName ?? '');
+          }
+          return {'user': user};
         }
-        return {'user': user};
+      } else {
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) {
+          return {'error': 'Google Sign-In cancelled by user.'};
+        }
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        UserCredential result = await _auth.signInWithCredential(credential);
+        User? user = result.user;
+        if (user != null) {
+          DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
+          if (!doc.exists) {
+            await createUser(user.uid, user.email ?? '', user.displayName ?? '');
+          }
+          return {'user': user};
+        }
       }
       return null;
     } on FirebaseAuthException catch (e) {
@@ -133,7 +158,6 @@ class AuthService {
     }
   }
 
-  // Create user in Firestore
   Future<void> createUser(String uid, String email, String fullName) async {
     await _firestore.collection('users').doc(uid).set({
       'email': email,
@@ -143,20 +167,56 @@ class AuthService {
     });
   }
 
-  // Sign Out
   Future<void> signOut() async {
-    await _googleSignIn.signOut(); // Sign out from Google
-    await _auth.signOut(); // Sign out from Firebase
+    await _googleSignIn.signOut();
+    await _auth.signOut();
   }
 
-  // Check if email is verified
-  bool isEmailVerified() {
-    return _auth.currentUser?.emailVerified ?? false;
+  Future<Map<String, dynamic>> verifyOTP(String userId, String inputOTP) async {
+    try {
+      DocumentSnapshot doc = await _firestore.collection('otps').doc(userId).get();
+      if (!doc.exists) {
+        return {'error': 'OTP not found or expired.'};
+      }
+
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      String storedOTP = data['otp'];
+      int expiresAt = data['expiresAt'];
+
+      if (DateTime.now().millisecondsSinceEpoch > expiresAt) {
+        await _firestore.collection('otps').doc(userId).delete();
+        return {'error': 'OTP has expired.'};
+      }
+
+      if (inputOTP == storedOTP) {
+        await _firestore.collection('otps').doc(userId).delete();
+        return {'success': true};
+      } else {
+        return {'error': 'Invalid OTP.'};
+      }
+    } catch (e) {
+      print(e.toString());
+      return {'error': 'Failed to verify OTP.'};
+    }
   }
 
-  // Verify OTP
-  Future<bool> verifyOTP(String inputOTP, String sentOTP) async {
-    await Future.delayed(Duration(seconds: 1)); // Simulate server delay
-    return inputOTP == sentOTP;
+  Future<Map<String, dynamic>?> resendOTP(String userId, String email) async {
+    try {
+      String otp = _generateOTP();
+      await _firestore.collection('otps').doc(userId).set({
+        'otp': otp,
+        'email': email,
+        'createdAt': FieldValue.serverTimestamp(),
+        'expiresAt': DateTime.now().add(Duration(minutes: 5)).millisecondsSinceEpoch,
+      });
+
+      final callable = _functions.httpsCallable('sendOTP');
+      await callable.call({'email': email, 'otp': otp});
+
+      return {'otp': otp}; // For debugging; remove in production
+    } catch (e) {
+      print(e.toString());
+      return {'error': 'Failed to resend OTP.'};
+    }
   }
 }

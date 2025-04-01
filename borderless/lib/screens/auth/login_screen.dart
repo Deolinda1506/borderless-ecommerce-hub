@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../services/auth_service.dart';
-import '../../providers/user_provider.dart'; // Import UserProvider
+import '../../providers/user_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
