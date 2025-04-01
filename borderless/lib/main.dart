@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_core/firebase_core.dart'; // Added for Firebase initialization
-import 'package:provider/provider.dart'; // Added for UserProvider
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:provider/provider.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_state.dart';
 import 'blocs/cart/cart_bloc.dart';
@@ -30,20 +31,36 @@ import 'screens/order_success_screen.dart';
 import 'blocs/shipping/shipping_bloc.dart';
 import 'screens/categories_screen.dart';
 import 'screens/search_screen.dart';
-import 'services/auth_service.dart'; // Added for AuthService
-import 'providers/user_provider.dart'; // Added for UserProvider
+import 'services/auth_service.dart';
+import 'providers/user_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
+  try {
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyCdumWIoj92urwYog_eZwQDroHXeYA03cE",
+          appId: "1:278341916342:web:88b7b94bcb4511be13f817",
+          messagingSenderId: "278341916342",
+          projectId: "borderless-31448",
+          authDomain: "borderless-31448.firebaseapp.com",
+          storageBucket: "borderless-31448.firebasestorage.app",
+          measurementId: "G-VFLVCHCDSX",
+        ),
+      );
+    } else {
+      await Firebase.initializeApp();
+    }
+  } catch (e) {
+    print('Firebase initialization failed: $e');
+  }
 
-  // Set preferred orientations to portrait only
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // Set system overlay style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -53,16 +70,16 @@ void main() async {
     ),
   );
 
-  final authService = AuthService(); // Create AuthService instance
+  final authService = AuthService();
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()), // Provide UserProvider
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => AuthBloc(authService: authService)), // Pass AuthService
+          BlocProvider(create: (context) => AuthBloc(authService: authService)),
           BlocProvider(create: (context) => CartBloc()),
           BlocProvider(create: (context) => ProductsBloc()),
           BlocProvider(create: (context) => ProductListingBloc()),
@@ -87,7 +104,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Borderless',
           debugShowCheckedModeBanner: false,
-          theme: context.read<ThemeBloc>().themeData,
+          theme: state.themeData,
           initialRoute: '/',
           routes: {
             '/': (context) => const SplashScreen(),
@@ -95,8 +112,7 @@ class MyApp extends StatelessWidget {
             '/signup': (context) => const SignUpScreen(),
             '/home': (context) => const HomeScreen(),
             '/email-verification': (context) {
-              final args = ModalRoute.of(context)!.settings.arguments
-              as Map<String, dynamic>?;
+              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
               return EmailVerificationScreen(
                 isForgotPassword: args?['isForgotPassword'] ?? false,
               );
@@ -112,13 +128,11 @@ class MyApp extends StatelessWidget {
             '/categories': (context) => const CategoriesScreen(),
             '/search': (context) => const SearchScreen(),
             '/order-success': (context) {
-              final orderId =
-              ModalRoute.of(context)!.settings.arguments as String;
+              final orderId = ModalRoute.of(context)!.settings.arguments as String;
               return OrderSuccessScreen(orderId: orderId);
             },
             '/order-tracking': (context) {
-              final orderId =
-              ModalRoute.of(context)!.settings.arguments as String;
+              final orderId = ModalRoute.of(context)!.settings.arguments as String;
               return OrderTrackingScreen(orderId: orderId);
             },
           },
