@@ -1,18 +1,17 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'product.dart';
 
 class CartItem {
   final Product product;
   final int quantity;
-  final Color selectedColor;
+  final Color? selectedColor;
   final String? selectedSize;
   bool isSavedForLater;
 
   CartItem({
     required this.product,
     required this.quantity,
-    required this.selectedColor,
+    this.selectedColor,
     this.selectedSize,
     this.isSavedForLater = false,
   });
@@ -41,7 +40,7 @@ class CartItem {
       'product': product.toJson(),
       'quantity': quantity,
       'selectedSize': selectedSize,
-      'selectedColor': selectedColor.value,
+      'selectedColor': selectedColor?.value,
       'isSavedForLater': isSavedForLater,
     };
   }
@@ -51,7 +50,8 @@ class CartItem {
       product: Product.fromJson(json['product']),
       quantity: json['quantity'],
       selectedSize: json['selectedSize'],
-      selectedColor: Color(json['selectedColor']),
+      selectedColor:
+          json['selectedColor'] != null ? Color(json['selectedColor']) : null,
       isSavedForLater: json['isSavedForLater'] ?? false,
     );
   }

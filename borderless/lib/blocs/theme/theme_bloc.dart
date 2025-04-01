@@ -24,10 +24,8 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       primary: const Color(0xFF21D4B4),
       secondary: const Color(0xFF21D4B4),
       surface: Colors.white,
-      background: Colors.grey[100]!,
       onPrimary: Colors.white,
       onSurface: Colors.black87,
-      onBackground: Colors.black87,
       onSecondary: Colors.white,
       error: Colors.red,
       onError: Colors.white,
@@ -62,14 +60,14 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith((states) =>
-      states.contains(MaterialState.selected)
-          ? const Color(0xFF21D4B4)
-          : Colors.grey),
-      trackColor: MaterialStateProperty.resolveWith((states) =>
-      states.contains(MaterialState.selected)
-          ? const Color(0xFF21D4B4).withOpacity(0.5)
-          : Colors.grey.withOpacity(0.3)),
+      thumbColor: WidgetStateProperty.resolveWith((states) =>
+          states.contains(WidgetState.selected)
+              ? const Color(0xFF21D4B4)
+              : Colors.grey),
+      trackColor: WidgetStateProperty.resolveWith((states) =>
+          states.contains(WidgetState.selected)
+              ? const Color(0xFF21D4B4).withOpacity(0.5)
+              : Colors.grey.withOpacity(0.3)),
     ),
   );
 
@@ -86,14 +84,13 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
         fontWeight: FontWeight.w600,
       ),
     ),
-    colorScheme: ColorScheme.dark(
-      primary: const Color(0xFF21D4B4),
-      secondary: const Color(0xFF21D4B4),
-      surface: const Color(0xFF1E1E1E),
-      background: const Color(0xFF121212),
+    colorScheme: const ColorScheme.dark(
+      primary: Color(0xFF21D4B4),
+      secondary: Color(0xFF21D4B4),
+      surface: Color(0xFF1E1E1E),
+      background: Color(0xFF121212),
       onPrimary: Colors.white,
       onSurface: Colors.white,
-      onBackground: Colors.white,
       onSecondary: Colors.white,
       error: Colors.red,
       onError: Colors.white,
@@ -128,14 +125,14 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith((states) =>
-      states.contains(MaterialState.selected)
-          ? const Color(0xFF21D4B4)
-          : Colors.grey),
-      trackColor: MaterialStateProperty.resolveWith((states) =>
-      states.contains(MaterialState.selected)
-          ? const Color(0xFF21D4B4).withOpacity(0.5)
-          : Colors.grey.withOpacity(0.3)),
+      thumbColor: WidgetStateProperty.resolveWith((states) =>
+          states.contains(WidgetState.selected)
+              ? const Color(0xFF21D4B4)
+              : Colors.grey),
+      trackColor: WidgetStateProperty.resolveWith((states) =>
+          states.contains(WidgetState.selected)
+              ? const Color(0xFF21D4B4).withOpacity(0.5)
+              : Colors.grey.withOpacity(0.3)),
     ),
   );
 
@@ -154,7 +151,8 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     ));
   }
 
-  Future<void> _onToggleTheme(ToggleTheme event, Emitter<ThemeState> emit) async {
+  Future<void> _onToggleTheme(
+      ToggleTheme event, Emitter<ThemeState> emit) async {
     final prefs = await SharedPreferences.getInstance();
     final isDarkMode = !state.isDarkMode;
     await prefs.setBool(_themeKey, isDarkMode);

@@ -5,7 +5,6 @@ import '../screens/categories_screen.dart';
 import '../screens/wishlist_screen.dart';
 import '../screens/cart_screen.dart';
 import '../screens/profile/profile_screen.dart';
-import '../blocs/wishlist/wishlist_bloc.dart';
 import '../blocs/theme/theme.dart';
 
 class BottomNavBar extends StatelessWidget {

@@ -23,9 +23,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Password*',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             color: Colors.black87,
           ),

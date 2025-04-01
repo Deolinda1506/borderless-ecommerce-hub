@@ -40,10 +40,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (result != null && result.containsKey('user')) {
         context.read<AuthBloc>().add(SignUp(
-          email: _emailController.text,
-          password: _passwordController.text,
-          name: _fullNameController.text, // Add name here
-        ));
+              email: _emailController.text,
+              password: _passwordController.text,
+              name: _fullNameController.text, // Add name here
+            ));
         Navigator.pushNamed(
           context,
           '/email-verification',
@@ -73,12 +73,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final result = await authService.signInWithGoogle();
 
     if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
+      context.read<AuthBloc>().add(
+            const GoogleSignIn(),
+          );
 
       if (result != null && result.containsKey('user')) {
-        context.read<AuthBloc>().add(const GoogleSignIn());
         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -103,7 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
                     Text(
                       'B',
@@ -113,7 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         color: Color(0xFF21D4B4),
                       ),
                     ),
-                    const Text(
+                    Text(
                       'ORDERLESS',
                       style: TextStyle(
                         fontSize: 24,
@@ -146,7 +145,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       onTap: () {
                         Navigator.pushReplacementNamed(context, '/login');
                       },
-                      child: Text(
+                      child: const Text(
                         'Login',
                         style: TextStyle(
                           fontSize: 14,
@@ -175,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Color(0xFF21D4B4)),
+                      borderSide: const BorderSide(color: Color(0xFF21D4B4)),
                     ),
                   ),
                   validator: (value) {
@@ -204,7 +203,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Color(0xFF21D4B4)),
+                      borderSide: const BorderSide(color: Color(0xFF21D4B4)),
                     ),
                   ),
                   validator: (value) {
@@ -237,7 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Color(0xFF21D4B4)),
+                      borderSide: const BorderSide(color: Color(0xFF21D4B4)),
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -277,21 +276,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     child: _isLoading
                         ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
                         : const Text(
-                      'Create Account',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                            'Create Account',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -329,19 +328,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     icon: _isLoading
                         ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.grey),
-                      ),
-                    )
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.grey),
+                            ),
+                          )
                         : Image.asset(
-                      'assets/icons/google.png',
-                      width: 24,
-                      height: 24,
-                    ),
+                            'assets/icons/google.png',
+                            width: 24,
+                            height: 24,
+                          ),
                     label: const Text(
                       'Signup with Google',
                       style: TextStyle(

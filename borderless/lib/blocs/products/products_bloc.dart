@@ -21,7 +21,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
       // For now, we'll use mock data
       await Future.delayed(const Duration(seconds: 1));
       final mockProducts = [
-        Product(
+        const Product(
           id: '1',
           name: 'Smart Watch',
           description: 'A beautiful smart watch',
@@ -29,7 +29,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
           imageUrl: 'assets/images/watch1.png',
           category: 'Watches',
         ),
-        Product(
+        const Product(
           id: '2',
           name: 'Wireless Headphones',
           description: 'High-quality wireless headphones',

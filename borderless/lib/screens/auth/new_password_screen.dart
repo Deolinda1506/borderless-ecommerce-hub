@@ -171,9 +171,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
-                            const Text(
+                            Text(
                               'Password',
                               style: TextStyle(
                                 fontSize: 16,
@@ -209,7 +209,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Color(0xFF4CD964)),
+                              borderSide:
+                                  const BorderSide(color: Color(0xFF4CD964)),
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -244,9 +245,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
-                            const Text(
+                            Text(
                               'Confirm Password',
                               style: TextStyle(
                                 fontSize: 16,
@@ -282,7 +283,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Color(0xFF4CD964)),
+                              borderSide:
+                                  const BorderSide(color: Color(0xFF4CD964)),
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -321,7 +323,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     ),
                   ),
                   child: _isLoading
-                      ? SizedBox(
+                      ? const SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(

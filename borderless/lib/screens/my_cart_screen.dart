@@ -7,7 +7,7 @@ import 'profile/profile_shipping_screen.dart';
 class MyCartPage extends StatefulWidget {
   final Map<String, int> cartItems;
 
-  MyCartPage({required this.cartItems});
+  const MyCartPage({super.key, required this.cartItems});
 
   @override
   _MyCartPageState createState() => _MyCartPageState();
@@ -58,7 +58,7 @@ class _MyCartPageState extends State<MyCartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('My Cart')),
+      appBar: AppBar(title: const Text('My Cart')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -69,15 +69,15 @@ class _MyCartPageState extends State<MyCartPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.shopping_cart,
+                          const Icon(Icons.shopping_cart,
                               size: 80, color: Colors.grey),
-                          SizedBox(height: 10),
-                          Text("Your cart is empty!",
+                          const SizedBox(height: 10),
+                          const Text("Your cart is empty!",
                               style: TextStyle(fontSize: 18)),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           ElevatedButton(
                             onPressed: () {},
-                            child: Text("Explore Categories"),
+                            child: const Text("Explore Categories"),
                           ),
                         ],
                       ),
@@ -96,16 +96,17 @@ class _MyCartPageState extends State<MyCartPage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.remove),
+                                  icon: const Icon(Icons.remove),
                                   onPressed: () => updateQuantity(product, -1),
                                 ),
                                 Text(widget.cartItems[product]!.toString()),
                                 IconButton(
-                                  icon: Icon(Icons.add),
+                                  icon: const Icon(Icons.add),
                                   onPressed: () => updateQuantity(product, 1),
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
                                   onPressed: () => removeItem(product),
                                 ),
                               ],
@@ -115,58 +116,58 @@ class _MyCartPageState extends State<MyCartPage> {
                       }).toList(),
                     ),
             ),
-            Divider(),
+            const Divider(),
             TextField(
               controller: voucherController,
               decoration: InputDecoration(
                 labelText: 'Enter Voucher Code',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 errorText: errorMessage,
                 suffixIcon: ElevatedButton(
                   onPressed: applyVoucher,
-                  child: Text('Apply'),
+                  child: const Text('Apply'),
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Subtotal:', style: TextStyle(fontSize: 16)),
+                const Text('Subtotal:', style: TextStyle(fontSize: 16)),
                 Text('\$${subtotal.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 16)),
+                    style: const TextStyle(fontSize: 16)),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Discount:',
+                const Text('Discount:',
                     style: TextStyle(fontSize: 16, color: Colors.green)),
                 Text('-\$${discount.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 16, color: Colors.green)),
+                    style: const TextStyle(fontSize: 16, color: Colors.green)),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Shipping Cost:', style: TextStyle(fontSize: 16)),
+                const Text('Shipping Cost:', style: TextStyle(fontSize: 16)),
                 Text('\$${shippingCost.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 16)),
+                    style: const TextStyle(fontSize: 16)),
               ],
             ),
-            Divider(),
+            const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Total:',
+                const Text('Total:',
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 Text('\$${total.toStringAsFixed(2)}',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: widget.cartItems.isEmpty
                   ? null
@@ -179,12 +180,12 @@ class _MyCartPageState extends State<MyCartPage> {
                       );
                     },
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
                 backgroundColor: Colors.green,
               ),
               child: Text(
                 'Checkout (${widget.cartItems.length})',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],

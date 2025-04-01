@@ -3,8 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/wishlist/wishlist_bloc.dart';
 import '../blocs/wishlist/wishlist_event.dart';
 import '../blocs/wishlist/wishlist_state.dart';
+import '../blocs/cart/cart_bloc.dart';
+import '../blocs/cart/cart_event.dart';
 import '../models/product.dart';
 import '../widgets/bottom_nav_bar.dart';
+import 'categories_screen.dart';
+import 'cart_screen.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
@@ -31,6 +35,52 @@ class WishlistScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _showAddToCartSuccess(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text('Product has been added to your cart'),
+            const Spacer(),
+            TextButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CartScreen()),
+                );
+              },
+              child: const Text(
+                'View Cart',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF21D4B4),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _addToCart(BuildContext context, Product product) {
+    context.read<CartBloc>().add(
+          AddToCart(
+            product: product,
+            quantity: 1,
+            selectedSize: 'One Size',
+            selectedColor: product.colors?.isNotEmpty == true
+                ? product.colors!.first
+                : null,
+            imageUrl: product.imageUrl,
+          ),
+        );
+    _showAddToCartSuccess(context);
   }
 
   Widget _buildEmptyWishlist() {
@@ -110,12 +160,29 @@ class WishlistScreen extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () => _addToCart(context, product),
+                        icon:
+                            const Icon(Icons.shopping_cart_outlined, size: 18),
+                        label: const Text('Add to Cart'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF21D4B4),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () => _showDeleteDialog(context, product),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () => _showDeleteDialog(context, product),
             ),
           ],
         ),
@@ -127,7 +194,25 @@ class WishlistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wishlist'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Wishlist',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CategoriesScreen()),
+            );
+          },
+        ),
       ),
       body: BlocBuilder<WishlistBloc, WishlistState>(
         builder: (context, state) {

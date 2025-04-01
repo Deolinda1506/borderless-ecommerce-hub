@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/category.dart';
 import '../widgets/bottom_nav_bar.dart';
-import '../widgets/animated_widgets.dart';
 import 'subcategories_screen.dart';
+import 'home_screen.dart';
+import 'search_screen.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -72,13 +73,21 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
             onPressed: () {
-              // TODO: Navigate to search screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchScreen()),
+              );
             },
           ),
         ],

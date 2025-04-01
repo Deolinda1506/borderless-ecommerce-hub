@@ -53,125 +53,197 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-  Future<void> _saveCartState(CartState state) async {
+  Future<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
     try {
+      final currentState = state;
+      final updatedItems = List<CartItem>.from(currentState.items);
+
+      final existingIndex = updatedItems.indexWhere(
+        (item) => item.product.id == event.product.id,
+      );
+
+      if (existingIndex >= 0) {
+        updatedItems[existingIndex] = updatedItems[existingIndex].copyWith(
+          quantity: updatedItems[existingIndex].quantity + 1,
+        );
+      } else {
+        updatedItems.add(CartItem(
+          product: event.product,
+          quantity: 1,
+        ));
+      }
+
+      final updatedState = currentState.copyWith(items: updatedItems);
+      emit(updatedState);
+
+      // Save to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-
-      final cartJson =
-          jsonEncode(state.items.map((item) => item.toJson()).toList());
-      final savedItemsJson =
-          jsonEncode(state.savedItems.map((item) => item.toJson()).toList());
-
-      await prefs.setString(_cartKey, cartJson);
-      await prefs.setString(_savedItemsKey, savedItemsJson);
+      await prefs.setString(
+        _cartKey,
+        jsonEncode(updatedItems.map((item) => item.toJson()).toList()),
+      );
     } catch (e) {
-      // Handle error
-      print('Error saving cart: $e');
+      print('Error adding to cart: $e');
     }
   }
 
-  void _onAddToCart(AddToCart event, Emitter<CartState> emit) {
-    final currentItems = List<CartItem>.from(state.items);
-    final existingIndex = currentItems.indexWhere(
-      (item) => item.product.id == event.product.id,
-    );
+  Future<void> _onRemoveFromCart(
+    RemoveFromCart event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      final currentState = state;
+      final updatedItems = currentState.items
+          .where((item) => item.product.id != event.productId)
+          .toList();
 
-    if (existingIndex >= 0) {
-      currentItems[existingIndex] = currentItems[existingIndex].copyWith(
-        quantity: currentItems[existingIndex].quantity + event.quantity,
+      final updatedState = currentState.copyWith(items: updatedItems);
+      emit(updatedState);
+
+      // Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _cartKey,
+        jsonEncode(updatedItems.map((item) => item.toJson()).toList()),
       );
-    } else {
-      currentItems.add(CartItem(
-        product: event.product,
-        quantity: event.quantity,
-        selectedSize: event.selectedSize,
-        selectedColor: event.selectedColor,
-      ));
+    } catch (e) {
+      print('Error removing from cart: $e');
     }
-
-    final newState = state.copyWith(items: currentItems);
-    emit(newState);
-    _saveCartState(newState);
   }
 
-  void _onRemoveFromCart(RemoveFromCart event, Emitter<CartState> emit) {
-    final currentItems = List<CartItem>.from(state.items)
-      ..removeWhere((item) => item.product.id == event.productId);
-    final newState = state.copyWith(items: currentItems);
-    emit(newState);
-    _saveCartState(newState);
-  }
+  Future<void> _onUpdateQuantity(
+    UpdateQuantity event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      final currentState = state;
+      final updatedItems = currentState.items.map((item) {
+        if (item.product.id == event.productId) {
+          return item.copyWith(quantity: event.quantity);
+        }
+        return item;
+      }).toList();
 
-  void _onUpdateQuantity(UpdateQuantity event, Emitter<CartState> emit) {
-    if (event.quantity <= 0) {
-      add(RemoveFromCart(event.productId));
-      return;
-    }
+      final updatedState = currentState.copyWith(items: updatedItems);
+      emit(updatedState);
 
-    final currentItems = List<CartItem>.from(state.items);
-    final index = currentItems.indexWhere(
-      (item) => item.product.id == event.productId,
-    );
-
-    if (index >= 0) {
-      currentItems[index] = currentItems[index].copyWith(
-        quantity: event.quantity,
+      // Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _cartKey,
+        jsonEncode(updatedItems.map((item) => item.toJson()).toList()),
       );
-      final newState = state.copyWith(items: currentItems);
-      emit(newState);
-      _saveCartState(newState);
+    } catch (e) {
+      print('Error updating quantity: $e');
     }
   }
 
-  void _onSaveForLater(SaveForLater event, Emitter<CartState> emit) {
-    final currentItems = List<CartItem>.from(state.items);
-    final currentSavedItems = List<CartItem>.from(state.savedItems);
+  Future<void> _onSaveForLater(
+    SaveForLater event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      final currentState = state;
+      final cartItem = currentState.items
+          .firstWhere((item) => item.product.id == event.productId);
 
-    final itemToSave = currentItems.firstWhere(
-      (item) => item.product.id == event.productId,
-    );
+      final updatedCartItems = currentState.items
+          .where((item) => item.product.id != event.productId)
+          .toList();
 
-    currentItems.removeWhere((item) => item.product.id == event.productId);
-    currentSavedItems.add(itemToSave.copyWith(isSavedForLater: true));
+      final updatedSavedItems = [...currentState.savedItems, cartItem];
 
-    final newState = state.copyWith(
-      items: currentItems,
-      savedItems: currentSavedItems,
-    );
-    emit(newState);
-    _saveCartState(newState);
+      final updatedState = currentState.copyWith(
+        items: updatedCartItems,
+        savedItems: updatedSavedItems,
+      );
+      emit(updatedState);
+
+      // Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _cartKey,
+        jsonEncode(updatedCartItems.map((item) => item.toJson()).toList()),
+      );
+      await prefs.setString(
+        _savedItemsKey,
+        jsonEncode(updatedSavedItems.map((item) => item.toJson()).toList()),
+      );
+    } catch (e) {
+      print('Error saving for later: $e');
+    }
   }
 
-  void _onMoveToCart(MoveToCart event, Emitter<CartState> emit) {
-    final currentItems = List<CartItem>.from(state.items);
-    final currentSavedItems = List<CartItem>.from(state.savedItems);
+  Future<void> _onMoveToCart(
+    MoveToCart event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      final currentState = state;
+      final savedItem = currentState.savedItems
+          .firstWhere((item) => item.product.id == event.productId);
 
-    final itemToMove = currentSavedItems.firstWhere(
-      (item) => item.product.id == event.productId,
-    );
+      final updatedSavedItems = currentState.savedItems
+          .where((item) => item.product.id != event.productId)
+          .toList();
 
-    currentSavedItems.removeWhere((item) => item.product.id == event.productId);
-    currentItems.add(itemToMove.copyWith(isSavedForLater: false));
+      final updatedCartItems = [...currentState.items, savedItem];
 
-    final newState = state.copyWith(
-      items: currentItems,
-      savedItems: currentSavedItems,
-    );
-    emit(newState);
-    _saveCartState(newState);
+      final updatedState = currentState.copyWith(
+        items: updatedCartItems,
+        savedItems: updatedSavedItems,
+      );
+      emit(updatedState);
+
+      // Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _cartKey,
+        jsonEncode(updatedCartItems.map((item) => item.toJson()).toList()),
+      );
+      await prefs.setString(
+        _savedItemsKey,
+        jsonEncode(updatedSavedItems.map((item) => item.toJson()).toList()),
+      );
+    } catch (e) {
+      print('Error moving to cart: $e');
+    }
   }
 
-  void _onRemoveSavedItem(RemoveSavedItem event, Emitter<CartState> emit) {
-    final currentSavedItems = List<CartItem>.from(state.savedItems)
-      ..removeWhere((item) => item.product.id == event.productId);
-    final newState = state.copyWith(savedItems: currentSavedItems);
-    emit(newState);
-    _saveCartState(newState);
+  Future<void> _onRemoveSavedItem(
+    RemoveSavedItem event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      final currentState = state;
+      final updatedSavedItems = currentState.savedItems
+          .where((item) => item.product.id != event.productId)
+          .toList();
+
+      final updatedState = currentState.copyWith(savedItems: updatedSavedItems);
+      emit(updatedState);
+
+      // Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _savedItemsKey,
+        jsonEncode(updatedSavedItems.map((item) => item.toJson()).toList()),
+      );
+    } catch (e) {
+      print('Error removing saved item: $e');
+    }
   }
 
-  void _onClearCart(ClearCart event, Emitter<CartState> emit) {
-    final newState = const CartState();
-    emit(newState);
-    _saveCartState(newState);
+  Future<void> _onClearCart(ClearCart event, Emitter<CartState> emit) async {
+    try {
+      final updatedState = state.copyWith(items: []);
+      emit(updatedState);
+
+      // Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_cartKey, '[]');
+    } catch (e) {
+      print('Error clearing cart: $e');
+    }
   }
 }

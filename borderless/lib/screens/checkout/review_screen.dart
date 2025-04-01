@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/cart/cart_bloc.dart';
 import '../../blocs/cart/cart_state.dart';
-import '../../blocs/shipping/shipping_bloc.dart';
-import '../../blocs/shipping/shipping_state.dart';
 import '../../models/cart_item.dart';
 import '../../widgets/checkout_stepper.dart';
-import '../order_success_screen.dart';
 
 class CheckoutReviewScreen extends StatefulWidget {
   const CheckoutReviewScreen({super.key});
@@ -58,7 +55,7 @@ class _CheckoutReviewScreenState extends State<CheckoutReviewScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${item.selectedSize} • ${item.selectedColor.value.toRadixString(16)}',
+                    '${item.selectedSize}${item.selectedColor != null ? ' • ${item.selectedColor!.value.toRadixString(16)}' : ''}',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],

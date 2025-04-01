@@ -3,6 +3,9 @@ import '../widgets/animated_widgets.dart';
 import 'order_tracking_screen.dart';
 import 'profile/order_history_screen.dart';
 import 'categories_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../blocs/orders/orders_bloc.dart';
+import '../blocs/orders/orders_event.dart';
 
 class OrderSuccessScreen extends StatelessWidget {
   final String orderId;
@@ -88,11 +91,12 @@ class OrderSuccessScreen extends StatelessWidget {
               // Action Buttons
               ScaleOnTap(
                 onTap: () {
-                  Navigator.push(
+                  // Load orders before navigating
+                  context.read<OrdersBloc>().add(LoadOrders());
+                  Navigator.pushNamedAndRemoveUntil(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const OrderHistoryScreen(),
-                    ),
+                    '/order-history',
+                    (route) => false,
                   );
                 },
                 child: Container(
@@ -104,7 +108,7 @@ class OrderSuccessScreen extends StatelessWidget {
                   ),
                   child: const Center(
                     child: Text(
-                      'Track Order',
+                      'View Orders',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

@@ -181,21 +181,21 @@ class ExclusiveProduct {
 }
 
 final List<ExclusiveProduct> _demoProducts = [
-  ExclusiveProduct(
+  const ExclusiveProduct(
     name: 'Wireless Headphones',
     image: 'assets/images/headphones.png',
     price: 99.99,
     originalPrice: 149.99,
     colors: [Colors.black, Colors.white],
   ),
-  ExclusiveProduct(
+  const ExclusiveProduct(
     name: 'Smart Watch',
     image: 'assets/images/watch.png',
     price: 199.99,
     originalPrice: 299.99,
     colors: [Colors.black, Colors.grey],
   ),
-  ExclusiveProduct(
+  const ExclusiveProduct(
     name: 'Running Shoes',
     image: 'assets/images/shoes.png',
     price: 79.99,

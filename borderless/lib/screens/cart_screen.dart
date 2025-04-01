@@ -9,6 +9,8 @@ import '../models/product.dart';
 import '../widgets/bottom_nav_bar.dart';
 import 'categories_screen.dart';
 import 'checkout/shipping_screen.dart';
+import 'wishlist_screen.dart';
+import '../blocs/shipping/shipping_bloc.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -22,14 +24,14 @@ class _CartScreenState extends State<CartScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  bool _showSavedItems = false;
+  final bool _showSavedItems = false;
   final _voucherController = TextEditingController();
-  bool _isApplyingVoucher = false;
+  final bool _isApplyingVoucher = false;
   String? _errorMessage;
-  double _shippingCost = 5.00;
+  final double _shippingCost = 5.00;
   final List<CartItem> _cartItems = [
     CartItem(
-      product: Product(
+      product: const Product(
         id: '1',
         name: 'Smart Watch',
         description: 'A stylish and functional smart watch',
@@ -44,7 +46,7 @@ class _CartScreenState extends State<CartScreen>
       selectedColor: Colors.black,
     ),
     CartItem(
-      product: Product(
+      product: const Product(
         id: '2',
         name: 'Fitness Watch',
         description: 'Track your fitness goals with this smart watch',
@@ -239,7 +241,7 @@ class _CartScreenState extends State<CartScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${item.selectedSize} • ${item.selectedColor.value.toRadixString(16)}',
+                      '${item.selectedSize}${item.selectedColor != null ? ' • ${item.selectedColor!.value.toRadixString(16)}' : ''}',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -341,7 +343,7 @@ class _CartScreenState extends State<CartScreen>
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          'Shopping Cart',
+          'Cart',
           style: TextStyle(
             color: Colors.black,
             fontSize: 16,
@@ -350,7 +352,12 @@ class _CartScreenState extends State<CartScreen>
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const WishlistScreen()),
+            );
+          },
         ),
       ),
       body: BlocBuilder<CartBloc, CartState>(
@@ -516,8 +523,10 @@ class _CartScreenState extends State<CartScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CheckoutShippingScreen(),
+                                  builder: (context) => BlocProvider(
+                                    create: (context) => ShippingBloc(),
+                                    child: const CheckoutShippingScreen(),
+                                  ),
                                 ),
                               );
                             },

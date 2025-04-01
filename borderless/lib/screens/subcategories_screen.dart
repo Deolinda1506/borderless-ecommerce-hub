@@ -24,14 +24,14 @@ class SubcategoriesScreen extends StatelessWidget {
             price: 999.99,
             imageUrl: 'assets/images/subcategories/smartphone.png',
             category: category,
-            products: [
+            products: const [
               {
                 'name': "iPhone 15 Pro Max",
                 'price': 1199.99,
                 'oldPrice': 1299.99,
                 'image': 'assets/images/products/iphone15.png',
                 'description': 'Latest iPhone with advanced features',
-                'specs': ['6.7" Display', 'A17 Pro Chip', '48MP Camera'],
+                'specs': const ['6.7" Display', 'A17 Pro Chip', '48MP Camera'],
               },
               {
                 'name': "Samsung Galaxy S24",
@@ -39,7 +39,11 @@ class SubcategoriesScreen extends StatelessWidget {
                 'oldPrice': 1099.99,
                 'image': 'assets/images/products/samsung_s24.png',
                 'description': 'Flagship Android smartphone',
-                'specs': ['6.8" Display', 'Snapdragon 8 Gen 3', '200MP Camera'],
+                'specs': const [
+                  '6.8" Display',
+                  'Snapdragon 8 Gen 3',
+                  '200MP Camera'
+                ],
               },
             ],
           ),
@@ -53,14 +57,18 @@ class SubcategoriesScreen extends StatelessWidget {
             price: 49.99,
             imageUrl: 'assets/images/subcategories/clothing.png',
             category: category,
-            products: [
+            products: const [
               {
                 'name': "Classic Denim Jacket",
                 'price': 79.99,
                 'oldPrice': 99.99,
                 'image': 'assets/images/products/denim_jacket.png',
                 'description': 'Timeless denim jacket for all occasions',
-                'specs': ['100% Cotton', 'Classic Fit', 'Multiple Colors'],
+                'specs': const [
+                  '100% Cotton',
+                  'Classic Fit',
+                  'Multiple Colors'
+                ],
               },
               {
                 'name': "Casual T-Shirt",
@@ -68,7 +76,7 @@ class SubcategoriesScreen extends StatelessWidget {
                 'oldPrice': 39.99,
                 'image': 'assets/images/products/tshirt.png',
                 'description': 'Comfortable everyday t-shirt',
-                'specs': ['Cotton Blend', 'Regular Fit', 'Various Sizes'],
+                'specs': const ['Cotton Blend', 'Regular Fit', 'Various Sizes'],
               },
             ],
           ),
@@ -82,7 +90,7 @@ class SubcategoriesScreen extends StatelessWidget {
             price: 799.99,
             imageUrl: 'assets/images/subcategories/sofa.png',
             category: category,
-            products: [
+            products: const [
               {
                 'name': "Modern 3-Seater Sofa",
                 'price': 899.99,
@@ -90,7 +98,7 @@ class SubcategoriesScreen extends StatelessWidget {
                 'image': 'assets/images/products/sofa.png',
                 'description':
                     'Contemporary design sofa with premium materials',
-                'specs': ['Premium Leather', '3-Seater', 'Reclining'],
+                'specs': const ['Premium Leather', '3-Seater', 'Reclining'],
               },
               {
                 'name': "Coffee Table",
@@ -98,7 +106,7 @@ class SubcategoriesScreen extends StatelessWidget {
                 'oldPrice': 399.99,
                 'image': 'assets/images/products/coffee_table.png',
                 'description': 'Stylish coffee table with storage',
-                'specs': ['Solid Wood', 'Storage Space', 'Modern Design'],
+                'specs': const ['Solid Wood', 'Storage Space', 'Modern Design'],
               },
             ],
           ),
@@ -112,14 +120,14 @@ class SubcategoriesScreen extends StatelessWidget {
             price: 9999.99,
             imageUrl: 'assets/images/subcategories/machinery.png',
             category: category,
-            products: [
+            products: const [
               {
                 'name': "Industrial Drill Press",
                 'price': 1299.99,
                 'oldPrice': 1499.99,
                 'image': 'assets/images/products/drill_press.png',
                 'description': 'Professional grade drill press',
-                'specs': [
+                'specs': const [
                   'Variable Speed',
                   'Digital Display',
                   'Safety Features'
@@ -131,7 +139,11 @@ class SubcategoriesScreen extends StatelessWidget {
                 'oldPrice': 5999.99,
                 'image': 'assets/images/products/lathe.png',
                 'description': 'Precision metalworking lathe',
-                'specs': ['CNC Control', 'Large Work Area', 'Coolant System'],
+                'specs': const [
+                  'CNC Control',
+                  'Large Work Area',
+                  'Coolant System'
+                ],
               },
             ],
           ),
@@ -145,14 +157,14 @@ class SubcategoriesScreen extends StatelessWidget {
             price: 199.99,
             imageUrl: 'assets/images/subcategories/lighting.png',
             category: category,
-            products: [
+            products: const [
               {
                 'name': "Crystal Chandelier",
                 'price': 299.99,
                 'oldPrice': 399.99,
                 'image': 'assets/images/products/chandelier.png',
                 'description': 'Elegant crystal chandelier',
-                'specs': ['LED Bulbs', 'Remote Control', 'Dimmable'],
+                'specs': const ['LED Bulbs', 'Remote Control', 'Dimmable'],
               },
               {
                 'name': "Modern Floor Lamp",
@@ -160,7 +172,7 @@ class SubcategoriesScreen extends StatelessWidget {
                 'oldPrice': 199.99,
                 'image': 'assets/images/products/floor_lamp.png',
                 'description': 'Contemporary floor lamp',
-                'specs': [
+                'specs': const [
                   'Adjustable Height',
                   'Smart Control',
                   'Energy Efficient'
@@ -178,14 +190,14 @@ class SubcategoriesScreen extends StatelessWidget {
             price: 599.99,
             imageUrl: 'assets/images/subcategories/concrete.png',
             category: category,
-            products: [
+            products: const [
               {
                 'name': "High-Strength Concrete",
                 'price': 89.99,
                 'oldPrice': 99.99,
                 'image': 'assets/images/products/concrete_mix.png',
                 'description': 'Premium concrete mix for construction',
-                'specs': [
+                'specs': const [
                   '40MPa Strength',
                   'Fast Setting',
                   'Weather Resistant'
@@ -197,7 +209,7 @@ class SubcategoriesScreen extends StatelessWidget {
                 'oldPrice': 399.99,
                 'image': 'assets/images/products/steel_beams.png',
                 'description': 'Heavy-duty structural steel',
-                'specs': [
+                'specs': const [
                   'Grade A Steel',
                   'Various Sizes',
                   'Corrosion Resistant'
@@ -215,14 +227,18 @@ class SubcategoriesScreen extends StatelessWidget {
             price: 49.99,
             imageUrl: 'assets/images/subcategories/wiring.png',
             category: category,
-            products: [
+            products: const [
               {
                 'name': "Circuit Breaker Panel",
                 'price': 199.99,
                 'oldPrice': 249.99,
                 'image': 'assets/images/products/circuit_breaker.png',
                 'description': 'Main circuit breaker panel',
-                'specs': ['200A Capacity', 'Surge Protection', 'Safety Rated'],
+                'specs': const [
+                  '200A Capacity',
+                  'Surge Protection',
+                  'Safety Rated'
+                ],
               },
               {
                 'name': "Copper Wiring Kit",
@@ -230,7 +246,7 @@ class SubcategoriesScreen extends StatelessWidget {
                 'oldPrice': 99.99,
                 'image': 'assets/images/products/wiring_kit.png',
                 'description': 'Complete electrical wiring kit',
-                'specs': ['12 Gauge', '100m Length', 'Color Coded'],
+                'specs': const ['12 Gauge', '100m Length', 'Color Coded'],
               },
             ],
           ),
@@ -244,14 +260,14 @@ class SubcategoriesScreen extends StatelessWidget {
             price: 799.99,
             imageUrl: 'assets/images/subcategories/steel.png',
             category: category,
-            products: [
+            products: const [
               {
                 'name': "Metal Cutting Saw",
                 'price': 599.99,
                 'oldPrice': 699.99,
                 'image': 'assets/images/products/metal_saw.png',
                 'description': 'Professional metal cutting saw',
-                'specs': [
+                'specs': const [
                   'Variable Speed',
                   'Coolant System',
                   'Precision Guide'
@@ -263,7 +279,7 @@ class SubcategoriesScreen extends StatelessWidget {
                 'oldPrice': 1099.99,
                 'image': 'assets/images/products/welding_machine.png',
                 'description': 'Industrial welding machine',
-                'specs': [
+                'specs': const [
                   'MIG/TIG Capable',
                   'Digital Control',
                   'Safety Features'

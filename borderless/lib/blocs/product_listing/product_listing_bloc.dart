@@ -16,7 +16,7 @@ class ProductListingBloc
 
   // Sample products database
   final List<Product> _allProducts = [
-    Product(
+    const Product(
       id: '1',
       name: 'Wireless Headphones',
       description: 'High-quality wireless headphones with noise cancellation',
@@ -29,7 +29,7 @@ class ProductListingBloc
       reviews: 128,
       discountPercentage: 15,
     ),
-    Product(
+    const Product(
       id: '2',
       name: 'Smart Watch',
       description: 'Fitness tracking smartwatch with heart rate monitoring',
@@ -42,7 +42,7 @@ class ProductListingBloc
       reviews: 256,
       discountPercentage: 20,
     ),
-    Product(
+    const Product(
       id: '3',
       name: 'Designer Handbag',
       description: 'Luxury leather handbag with gold hardware',
@@ -55,7 +55,7 @@ class ProductListingBloc
       reviews: 89,
       discountPercentage: 10,
     ),
-    Product(
+    const Product(
       id: '4',
       name: 'Modern Coffee Table',
       description: 'Contemporary glass and wood coffee table',
@@ -67,7 +67,7 @@ class ProductListingBloc
       rating: 4.6,
       reviews: 45,
     ),
-    Product(
+    const Product(
       id: '5',
       name: 'Industrial Tool Set',
       description: 'Professional-grade industrial tool set',
@@ -80,7 +80,7 @@ class ProductListingBloc
       reviews: 67,
       discountPercentage: 5,
     ),
-    Product(
+    const Product(
       id: '6',
       name: 'Decorative Vase',
       description: 'Handcrafted ceramic decorative vase',
@@ -198,7 +198,9 @@ class ProductListingBloc
     if (event.filters.containsKey('colors')) {
       final colors = event.filters['colors'] as List<Color>;
       filteredProducts.removeWhere(
-        (product) => !product.colors.any((color) => colors.contains(color)),
+        (product) =>
+            product.colors == null ||
+            !product.colors!.any((color) => colors.contains(color)),
       );
     }
 

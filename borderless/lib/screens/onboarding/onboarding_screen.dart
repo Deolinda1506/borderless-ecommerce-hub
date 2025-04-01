@@ -80,10 +80,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   builder: (context) => const SignUpScreen()),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             'Skip for now',
                             style: TextStyle(
-                              color: const Color(0xFF21D4B4),
+                              color: Color(0xFF21D4B4),
                               fontSize: 14,
                             ),
                           ),
