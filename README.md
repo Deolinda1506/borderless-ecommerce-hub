@@ -192,4 +192,4 @@ lib/
 - Flutter team for the amazing framework
 - Firebase for the backend services
 - All contributors who have helped shape this project
-  
+
