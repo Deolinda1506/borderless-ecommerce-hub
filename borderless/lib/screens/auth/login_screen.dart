@@ -41,9 +41,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (result != null && result.containsKey('user')) {
         context.read<UserProvider>().setUser(result['user']);
         context.read<AuthBloc>().add(Login(
-          email: _emailController.text,
-          password: _passwordController.text,
-        ));
+              email: _emailController.text,
+              password: _passwordController.text,
+            ));
         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -96,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
                     Text(
                       'B',
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Color(0xFF21D4B4),
                       ),
                     ),
-                    const Text(
+                    Text(
                       'ORDERLESS',
                       style: TextStyle(
                         fontSize: 24,
@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         Navigator.pushReplacementNamed(context, '/signup');
                       },
-                      child: Text(
+                      child: const Text(
                         'Signup',
                         style: TextStyle(
                           fontSize: 14,
@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Color(0xFF21D4B4)),
+                      borderSide: const BorderSide(color: Color(0xFF21D4B4)),
                     ),
                   ),
                   validator: (value) {
@@ -202,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Color(0xFF21D4B4)),
+                      borderSide: const BorderSide(color: Color(0xFF21D4B4)),
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -235,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onTap: () {
                       Navigator.pushNamed(context, '/forgot-password');
                     },
-                    child: Text(
+                    child: const Text(
                       'Forgot Password?',
                       style: TextStyle(
                         fontSize: 14,
@@ -259,21 +259,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: _isLoading
                         ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
                         : const Text(
-                      'Login',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -311,19 +311,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     icon: _isLoading
                         ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.grey),
-                      ),
-                    )
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.grey),
+                            ),
+                          )
                         : Image.asset(
-                      'assets/icons/google.png',
-                      width: 24,
-                      height: 24,
-                    ),
+                            'assets/icons/google.png',
+                            width: 24,
+                            height: 24,
+                          ),
                     label: const Text(
                       'Login with Google',
                       style: TextStyle(

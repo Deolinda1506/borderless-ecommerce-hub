@@ -13,6 +13,10 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
+  List<Product> _filteredProducts = [];
+  String _selectedSort = 'Price (High to Low)';
+  bool _showResults = false;
+
   final List<String> recentSearches = [
     'Smart watch',
     'Laptop',
@@ -23,11 +27,12 @@ class _SearchScreenState extends State<SearchScreen> {
   ];
 
   // Mock search results
-  final List<Product> _searchResults = [
-    Product(
+  final List<Product> _allProducts = [
+    const Product(
       id: '1',
       name: 'Nike Air Max 270',
-      description: 'Men\'s Running Shoes',
+      description:
+          'Experience ultimate comfort with Nike Air Max 270. Features React foam midsole, breathable mesh upper, and the tallest Air unit yet for maximum cushioning. Perfect for both athletic performance and casual wear.',
       price: 150.00,
       imageUrl: 'assets/images/nike_shoes.png',
       category: 'Shoes',
@@ -36,10 +41,11 @@ class _SearchScreenState extends State<SearchScreen> {
       rating: 4.5,
       reviews: 128,
     ),
-    Product(
+    const Product(
       id: '2',
       name: 'Ray-Ban Sunglasses',
-      description: 'Classic Aviator Style',
+      description:
+          'Iconic Ray-Ban Aviator sunglasses with polarized lenses, gold-tone metal frame, and 100% UV protection. Includes premium leather case and cleaning cloth. Made in Italy.',
       price: 199.99,
       imageUrl: 'assets/images/glasses.png',
       category: 'Accessories',
@@ -48,7 +54,39 @@ class _SearchScreenState extends State<SearchScreen> {
       rating: 4.3,
       reviews: 95,
     ),
+    const Product(
+      id: '3',
+      name: 'Smart Watch Pro',
+      description:
+          'Advanced smartwatch with heart rate monitoring, sleep tracking, and GPS. Features a 1.4" AMOLED display, 5 ATM water resistance, and 7-day battery life. Compatible with iOS and Android.',
+      price: 299.99,
+      imageUrl: 'assets/images/smartwatch.png',
+      category: 'Electronics',
+      colors: [Colors.black, Colors.blue],
+      isAvailable: true,
+      rating: 4.7,
+      reviews: 256,
+    ),
+    const Product(
+      id: '4',
+      name: 'Laptop Ultra',
+      description:
+          '15.6" Ultra-thin laptop with 11th Gen Intel Core i7, 16GB RAM, 512GB SSD, and NVIDIA RTX 3050Ti. Features Thunderbolt 4, backlit keyboard, and 12-hour battery life. Perfect for professionals.',
+      price: 1299.99,
+      imageUrl: 'assets/images/laptop.png',
+      category: 'Electronics',
+      colors: [Colors.grey, Colors.black],
+      isAvailable: true,
+      rating: 4.6,
+      reviews: 189,
+    ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
 
   @override
   void dispose() {
@@ -56,12 +94,57 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
+  void _onSearchChanged() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _showResults = query.isNotEmpty;
+      if (query.isEmpty) {
+        _filteredProducts = [];
+        return;
+      }
+
+      _filteredProducts = _allProducts.where((product) {
+        return product.name.toLowerCase().contains(query) ||
+            product.description.toLowerCase().contains(query) ||
+            product.category.toLowerCase().contains(query);
+      }).toList();
+
+      _applySorting();
+    });
+  }
+
+  void _applySorting() {
+    switch (_selectedSort) {
+      case 'Price (Low to High)':
+        _filteredProducts.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case 'Price (High to Low)':
+        _filteredProducts.sort((a, b) => b.price.compareTo(a.price));
+        break;
+      case 'A-Z':
+        _filteredProducts.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case 'Z-A':
+        _filteredProducts.sort((a, b) => b.name.compareTo(a.name));
+        break;
+    }
+  }
+
   void _showFilterBottomSheet() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const FilterBottomSheet(),
+      builder: (context) => FilterBottomSheet(
+        selectedSort: _selectedSort,
+        onSortChanged: (String newSort) {
+          setState(() {
+            _selectedSort = newSort;
+            _applySorting();
+          });
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 
@@ -70,6 +153,80 @@ class _SearchScreenState extends State<SearchScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => const exclusive.ExclusiveSaleScreen(),
+      ),
+    );
+  }
+
+  Widget _buildProductCard(Product product) {
+    return Card(
+      margin: const EdgeInsets.all(8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            child: Image.asset(
+              product.imageUrl,
+              height: 150,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '\$${product.price.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF21D4B4),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.star,
+                      color: Colors.amber[700],
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${product.rating}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      ' (${product.reviews})',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -105,7 +262,7 @@ class _SearchScreenState extends State<SearchScreen> {
               controller: _searchController,
               autofocus: true,
               decoration: InputDecoration(
-                hintText: 'Search',
+                hintText: 'Search products...',
                 hintStyle: TextStyle(
                   color: Colors.grey[400],
                   fontSize: 16,
@@ -127,35 +284,58 @@ class _SearchScreenState extends State<SearchScreen> {
                   borderSide: const BorderSide(color: Color(0xFF21D4B4)),
                 ),
               ),
-              onSubmitted: (value) {
-                if (value.isNotEmpty) {
-                  _navigateToExclusiveSale();
-                }
-              },
             ),
           ),
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'RECENT SEARCH',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[600],
+          if (_showResults) ...[
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                '${_filteredProducts.length} results found',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: ListView.builder(
-              itemCount: recentSearches.length,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemBuilder: (context, index) {
-                return _buildRecentSearchItem(recentSearches[index]);
-              },
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(8),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                itemCount: _filteredProducts.length,
+                itemBuilder: (context, index) {
+                  return _buildProductCard(_filteredProducts[index]);
+                },
+              ),
             ),
-          ),
+          ] else ...[
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'RECENT SEARCH',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: recentSearches.length,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemBuilder: (context, index) {
+                  return _buildRecentSearchItem(recentSearches[index]);
+                },
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -165,7 +345,6 @@ class _SearchScreenState extends State<SearchScreen> {
     return InkWell(
       onTap: () {
         _searchController.text = search;
-        _navigateToExclusiveSale();
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -199,20 +378,33 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 class FilterBottomSheet extends StatefulWidget {
-  const FilterBottomSheet({super.key});
+  final String selectedSort;
+  final Function(String) onSortChanged;
+
+  const FilterBottomSheet({
+    super.key,
+    required this.selectedSort,
+    required this.onSortChanged,
+  });
 
   @override
   State<FilterBottomSheet> createState() => _FilterBottomSheetState();
 }
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  String _selectedSort = 'Price (High to Low)';
+  late String _selectedSort;
   final List<String> _sortOptions = [
     'Price (Low to High)',
     'Price (High to Low)',
     'A-Z',
     'Z-A',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedSort = widget.selectedSort;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -263,9 +455,12 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 value: option,
                 groupValue: _selectedSort,
                 onChanged: (value) {
-                  setState(() {
-                    _selectedSort = value!;
-                  });
+                  if (value != null) {
+                    setState(() {
+                      _selectedSort = value;
+                    });
+                    widget.onSortChanged(value);
+                  }
                 },
               );
             },
@@ -276,6 +471,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
+                  widget.onSortChanged(_selectedSort);
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(

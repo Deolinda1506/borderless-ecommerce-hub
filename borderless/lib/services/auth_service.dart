@@ -26,11 +26,13 @@ class AuthService {
     const String chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     Random random = Random();
     return String.fromCharCodes(
-      Iterable.generate(6, (_) => chars.codeUnitAt(random.nextInt(chars.length))),
+      Iterable.generate(
+          6, (_) => chars.codeUnitAt(random.nextInt(chars.length))),
     );
   }
 
-  Future<Map<String, dynamic>?> signUpWithEmail(String email, String password, String fullName) async {
+  Future<Map<String, dynamic>?> signUpWithEmail(
+      String email, String password, String fullName) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -45,7 +47,8 @@ class AuthService {
           'otp': otp,
           'email': email,
           'createdAt': FieldValue.serverTimestamp(),
-          'expiresAt': DateTime.now().add(Duration(minutes: 5)).millisecondsSinceEpoch,
+          'expiresAt':
+              DateTime.now().add(Duration(minutes: 5)).millisecondsSinceEpoch,
         });
 
         final callable = _functions.httpsCallable('sendOTP');
@@ -77,7 +80,8 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>?> signInWithEmail(String email, String password) async {
+  Future<Map<String, dynamic>?> signInWithEmail(
+      String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -111,9 +115,11 @@ class AuthService {
         UserCredential result = await _auth.signInWithPopup(provider);
         User? user = result.user;
         if (user != null) {
-          DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
+          DocumentSnapshot doc =
+              await _firestore.collection('users').doc(user.uid).get();
           if (!doc.exists) {
-            await createUser(user.uid, user.email ?? '', user.displayName ?? '');
+            await createUser(
+                user.uid, user.email ?? '', user.displayName ?? '');
           }
           return {'user': user};
         }
@@ -122,7 +128,8 @@ class AuthService {
         if (googleUser == null) {
           return {'error': 'Google Sign-In cancelled by user.'};
         }
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
@@ -130,9 +137,11 @@ class AuthService {
         UserCredential result = await _auth.signInWithCredential(credential);
         User? user = result.user;
         if (user != null) {
-          DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
+          DocumentSnapshot doc =
+              await _firestore.collection('users').doc(user.uid).get();
           if (!doc.exists) {
-            await createUser(user.uid, user.email ?? '', user.displayName ?? '');
+            await createUser(
+                user.uid, user.email ?? '', user.displayName ?? '');
           }
           return {'user': user};
         }
@@ -174,7 +183,8 @@ class AuthService {
 
   Future<Map<String, dynamic>> verifyOTP(String userId, String inputOTP) async {
     try {
-      DocumentSnapshot doc = await _firestore.collection('otps').doc(userId).get();
+      DocumentSnapshot doc =
+          await _firestore.collection('otps').doc(userId).get();
       if (!doc.exists) {
         return {'error': 'OTP not found or expired.'};
       }
@@ -207,7 +217,8 @@ class AuthService {
         'otp': otp,
         'email': email,
         'createdAt': FieldValue.serverTimestamp(),
-        'expiresAt': DateTime.now().add(Duration(minutes: 5)).millisecondsSinceEpoch,
+        'expiresAt':
+            DateTime.now().add(Duration(minutes: 5)).millisecondsSinceEpoch,
       });
 
       final callable = _functions.httpsCallable('sendOTP');

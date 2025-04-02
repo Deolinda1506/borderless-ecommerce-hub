@@ -184,24 +184,16 @@ class _ProfileNewPasswordScreenState extends State<ProfileNewPasswordScreen> {
           child: ElevatedButton(
             onPressed: () {
               if (_formKey.currentState?.validate() ?? false) {
-                // Show success dialog
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Success'),
-                    content: const Text(
-                        'Your password has been changed successfully.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context); // Close dialog
-                          Navigator.pop(context); // Go back to profile screen
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
+                // Show snackbar and return to profile
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Password changed successfully'),
+                    backgroundColor: Color(0xFF21D4B4),
+                    duration: Duration(seconds: 2),
                   ),
                 );
+                // Navigate back to profile screen
+                Navigator.of(context).popUntil((route) => route.isFirst);
               }
             },
             style: ElevatedButton.styleFrom(

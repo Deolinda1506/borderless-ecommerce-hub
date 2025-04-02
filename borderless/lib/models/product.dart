@@ -9,7 +9,7 @@ class Product extends Equatable {
   final double? oldPrice;
   final String imageUrl;
   final String category;
-  final List<Color> colors;
+  final List<Color>? colors;
   final bool isAvailable;
   final bool isFavorite;
   final double? discountPercentage;
@@ -18,6 +18,7 @@ class Product extends Equatable {
   final int? reviews;
   final bool isNew;
   final List<Map<String, dynamic>>? products;
+  final List<String>? specifications;
 
   const Product({
     required this.id,
@@ -27,7 +28,7 @@ class Product extends Equatable {
     this.oldPrice,
     required this.imageUrl,
     required this.category,
-    this.colors = const [],
+    this.colors,
     this.isAvailable = true,
     this.isFavorite = false,
     this.discountPercentage,
@@ -36,6 +37,7 @@ class Product extends Equatable {
     this.reviews,
     this.isNew = false,
     this.products,
+    this.specifications,
   });
 
   @override
@@ -56,6 +58,7 @@ class Product extends Equatable {
         reviews,
         isNew,
         products,
+        specifications,
       ];
 
   Product copyWith({
@@ -75,6 +78,7 @@ class Product extends Equatable {
     int? reviews,
     bool? isNew,
     List<Map<String, dynamic>>? products,
+    List<String>? specifications,
   }) {
     return Product(
       id: id ?? this.id,
@@ -93,6 +97,7 @@ class Product extends Equatable {
       reviews: reviews ?? this.reviews,
       isNew: isNew ?? this.isNew,
       products: products ?? this.products,
+      specifications: specifications ?? this.specifications,
     );
   }
 
@@ -107,13 +112,19 @@ class Product extends Equatable {
       'name': name,
       'description': description,
       'price': price,
-      'discountPercentage': discountPercentage,
+      'oldPrice': oldPrice,
       'imageUrl': imageUrl,
-      'colors': colors.map((color) => color.value).toList(),
+      'category': category,
+      'colors': colors?.map((color) => color.value).toList(),
+      'isAvailable': isAvailable,
+      'isFavorite': isFavorite,
+      'discountPercentage': discountPercentage,
       'sizes': sizes,
       'rating': rating,
       'reviews': reviews,
+      'isNew': isNew,
       'products': products,
+      'specifications': specifications,
     };
   }
 
@@ -126,17 +137,20 @@ class Product extends Equatable {
       oldPrice: json['oldPrice']?.toDouble(),
       imageUrl: json['imageUrl'],
       category: json['category'],
-      colors: (json['colors'] as List)
-          .map((colorValue) => Color(colorValue))
-          .toList(),
+      colors: json['colors'] != null
+          ? (json['colors'] as List)
+              .map((colorValue) => Color(colorValue))
+              .toList()
+          : null,
       isAvailable: json['isAvailable'] ?? true,
       isFavorite: json['isFavorite'] ?? false,
       discountPercentage: json['discountPercentage']?.toDouble(),
       sizes: json['sizes']?.cast<String>(),
-      rating: json['rating'].toDouble(),
+      rating: json['rating']?.toDouble(),
       reviews: json['reviews'],
       isNew: json['isNew'] ?? false,
       products: json['products']?.cast<Map<String, dynamic>>(),
+      specifications: json['specifications']?.cast<String>(),
     );
   }
 }

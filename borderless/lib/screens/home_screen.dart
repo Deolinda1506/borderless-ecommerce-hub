@@ -16,6 +16,10 @@ import 'wishlist_screen.dart';
 import 'profile/profile_screen.dart';
 import '../widgets/logo.dart';
 import 'product_detail_screen.dart';
+import 'subcategories_screen.dart';
+import '../blocs/wishlist/wishlist_bloc.dart';
+import '../blocs/wishlist/wishlist_event.dart';
+import '../blocs/wishlist/wishlist_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,41 +49,210 @@ class _HomeScreenState extends State<HomeScreen> {
       id: '1',
       name: 'Electronics',
       imageUrl: 'assets/icons/electronics.png',
+      subCategories: [
+        SubCategory(
+            id: '1_1',
+            name: 'Smartphones',
+            image: 'assets/icons/electronics.png'),
+        SubCategory(
+            id: '1_2', name: 'Laptops', image: 'assets/icons/electronics.png'),
+        SubCategory(
+            id: '1_3', name: 'Tablets', image: 'assets/icons/electronics.png'),
+        SubCategory(
+            id: '1_4',
+            name: 'Accessories',
+            image: 'assets/icons/electronics.png'),
+        SubCategory(
+            id: '1_5',
+            name: 'Smart Watches',
+            image: 'assets/icons/electronics.png'),
+        SubCategory(
+            id: '1_6',
+            name: 'Audio Devices',
+            image: 'assets/icons/electronics.png'),
+      ],
     ),
     Category(
       id: '2',
       name: 'Fashion',
       imageUrl: 'assets/icons/fashion.png',
+      subCategories: [
+        SubCategory(
+            id: '2_1',
+            name: 'Men\'s Clothing',
+            image: 'assets/icons/fashion.png'),
+        SubCategory(
+            id: '2_2',
+            name: 'Women\'s Clothing',
+            image: 'assets/icons/fashion.png'),
+        SubCategory(
+            id: '2_3', name: 'Shoes', image: 'assets/icons/fashion.png'),
+        SubCategory(
+            id: '2_4', name: 'Accessories', image: 'assets/icons/fashion.png'),
+        SubCategory(
+            id: '2_5', name: 'Jewelry', image: 'assets/icons/fashion.png'),
+        SubCategory(id: '2_6', name: 'Bags', image: 'assets/icons/fashion.png'),
+      ],
     ),
     Category(
       id: '3',
       name: 'Furniture',
       imageUrl: 'assets/icons/furniture.png',
+      subCategories: [
+        SubCategory(
+            id: '3_1',
+            name: 'Living Room',
+            image: 'assets/icons/furniture.png'),
+        SubCategory(
+            id: '3_2', name: 'Bedroom', image: 'assets/icons/furniture.png'),
+        SubCategory(
+            id: '3_3', name: 'Kitchen', image: 'assets/icons/furniture.png'),
+        SubCategory(
+            id: '3_4', name: 'Office', image: 'assets/icons/furniture.png'),
+        SubCategory(
+            id: '3_5', name: 'Outdoor', image: 'assets/icons/furniture.png'),
+        SubCategory(
+            id: '3_6', name: 'Storage', image: 'assets/icons/furniture.png'),
+      ],
     ),
     Category(
       id: '4',
       name: 'Industrial',
       imageUrl: 'assets/icons/industrial.png',
+      subCategories: [
+        SubCategory(
+            id: '4_1', name: 'Machinery', image: 'assets/icons/industrial.png'),
+        SubCategory(
+            id: '4_2', name: 'Tools', image: 'assets/icons/industrial.png'),
+        SubCategory(
+            id: '4_3',
+            name: 'Safety Equipment',
+            image: 'assets/icons/industrial.png'),
+        SubCategory(
+            id: '4_4', name: 'Workwear', image: 'assets/icons/industrial.png'),
+        SubCategory(
+            id: '4_5',
+            name: 'Industrial Supplies',
+            image: 'assets/icons/industrial.png'),
+        SubCategory(
+            id: '4_6',
+            name: 'Heavy Equipment',
+            image: 'assets/icons/industrial.png'),
+      ],
     ),
     Category(
       id: '5',
       name: 'Home Decor',
       imageUrl: 'assets/icons/home_decor.png',
+      subCategories: [
+        SubCategory(
+            id: '5_1', name: 'Lighting', image: 'assets/icons/home_decor.png'),
+        SubCategory(
+            id: '5_2', name: 'Wall Art', image: 'assets/icons/home_decor.png'),
+        SubCategory(
+            id: '5_3', name: 'Rugs', image: 'assets/icons/home_decor.png'),
+        SubCategory(
+            id: '5_4', name: 'Curtains', image: 'assets/icons/home_decor.png'),
+        SubCategory(
+            id: '5_5',
+            name: 'Decorative Items',
+            image: 'assets/icons/home_decor.png'),
+        SubCategory(
+            id: '5_6', name: 'Plants', image: 'assets/icons/home_decor.png'),
+      ],
     ),
     Category(
       id: '7',
       name: 'Construction & Real Estate',
       imageUrl: 'assets/icons/construction.png',
+      subCategories: [
+        SubCategory(
+            id: '7_1',
+            name: 'Building Materials',
+            image: 'assets/icons/construction.png'),
+        SubCategory(
+            id: '7_2',
+            name: 'Construction Tools',
+            image: 'assets/icons/construction.png'),
+        SubCategory(
+            id: '7_3',
+            name: 'Real Estate Listings',
+            image: 'assets/icons/construction.png'),
+        SubCategory(
+            id: '7_4',
+            name: 'Property Services',
+            image: 'assets/icons/construction.png'),
+        SubCategory(
+            id: '7_5',
+            name: 'Contractors',
+            image: 'assets/icons/construction.png'),
+        SubCategory(
+            id: '7_6',
+            name: 'Architecture Services',
+            image: 'assets/icons/construction.png'),
+      ],
     ),
     Category(
       id: '8',
       name: 'Fabrication Service',
       imageUrl: 'assets/icons/fabrication.png',
+      subCategories: [
+        SubCategory(
+            id: '8_1',
+            name: 'Metal Fabrication',
+            image: 'assets/icons/fabrication.png'),
+        SubCategory(
+            id: '8_2',
+            name: 'Woodworking',
+            image: 'assets/icons/fabrication.png'),
+        SubCategory(
+            id: '8_3',
+            name: 'Plastic Fabrication',
+            image: 'assets/icons/fabrication.png'),
+        SubCategory(
+            id: '8_4',
+            name: 'Custom Projects',
+            image: 'assets/icons/fabrication.png'),
+        SubCategory(
+            id: '8_5',
+            name: 'Repair Services',
+            image: 'assets/icons/fabrication.png'),
+        SubCategory(
+            id: '8_6',
+            name: 'Installation',
+            image: 'assets/icons/fabrication.png'),
+      ],
     ),
     Category(
       id: '9',
       name: 'Electrical Equipment',
       imageUrl: 'assets/icons/electrical_equipment.png',
+      subCategories: [
+        SubCategory(
+            id: '9_1',
+            name: 'Power Tools',
+            image: 'assets/icons/electrical_equipment.png'),
+        SubCategory(
+            id: '9_2',
+            name: 'Electrical Supplies',
+            image: 'assets/icons/electrical_equipment.png'),
+        SubCategory(
+            id: '9_3',
+            name: 'Lighting Equipment',
+            image: 'assets/icons/electrical_equipment.png'),
+        SubCategory(
+            id: '9_4',
+            name: 'Safety Gear',
+            image: 'assets/icons/electrical_equipment.png'),
+        SubCategory(
+            id: '9_5',
+            name: 'Testing Equipment',
+            image: 'assets/icons/electrical_equipment.png'),
+        SubCategory(
+            id: '9_6',
+            name: 'Installation Tools',
+            image: 'assets/icons/electrical_equipment.png'),
+      ],
     ),
   ];
 
@@ -89,59 +262,131 @@ class _HomeScreenState extends State<HomeScreen> {
       name: 'Nike air Jordan retro fa...',
       price: 126.00,
       imageUrl: 'assets/images/nike_shoes.png',
-      description: 'Nike air Jordan retro fashion',
+      description:
+          'Classic Nike Air Jordan Retro sneakers featuring premium leather upper, Air cushioning technology, and iconic design elements. Perfect for both style and comfort.',
       category: 'Fashion',
-      colors: [Colors.black, Colors.red, Colors.green],
+      colors: [
+        const Color(0xFF1E1E1E),
+        const Color(0xFFD32F2F),
+        const Color(0xFF4CAF50)
+      ],
       discountPercentage: 30,
+      specifications: [
+        'Premium leather upper',
+        'Air cushioning technology',
+        'Rubber outsole',
+        'Available in multiple colors',
+        'True to size fit'
+      ],
     ),
     Product(
       id: '2',
       name: 'Classic new black glas...',
       price: 8.50,
       imageUrl: 'assets/images/glasses.png',
-      description: 'Classic new black glasses',
+      description:
+          'Stylish and comfortable black glasses with modern design. Features UV protection, lightweight frame, and perfect for everyday wear.',
       category: 'Fashion',
-      colors: [Colors.black, Colors.brown, Colors.grey],
+      colors: [
+        const Color(0xFF1E1E1E),
+        const Color(0xFF795548),
+        const Color(0xFF9E9E9E)
+      ],
+      specifications: [
+        'UV protection lenses',
+        'Lightweight frame',
+        'Adjustable nose pads',
+        'Spring hinges',
+        'Comes with protective case'
+      ],
     ),
     Product(
       id: '3',
       name: 'Apple Watch Series 8',
       price: 399.00,
       imageUrl: 'assets/images/smartwatch.png',
-      description: 'Latest Apple Watch with advanced health features',
+      description:
+          'Latest Apple Watch with advanced health features including heart rate monitoring, ECG, blood oxygen tracking, and always-on display. Water resistant and perfect for fitness enthusiasts.',
       category: 'Electronics',
-      colors: [Colors.black, Colors.grey[300]!, Colors.amber],
+      colors: [
+        const Color(0xFF1E1E1E),
+        const Color(0xFFE0E0E0),
+        const Color(0xFFFFA000)
+      ],
       discountPercentage: 15,
+      specifications: [
+        'Always-on display',
+        'Heart rate monitoring',
+        'ECG capability',
+        'Blood oxygen tracking',
+        'Water resistant',
+        'GPS enabled'
+      ],
     ),
     Product(
       id: '4',
       name: 'Modern Leather Backpack',
       price: 89.99,
       imageUrl: 'assets/images/backpack.png',
-      description: 'Premium leather backpack with laptop compartment',
+      description:
+          'Premium leather backpack with dedicated laptop compartment, multiple pockets, and adjustable straps. Perfect for daily commute and travel.',
       category: 'Fashion',
-      colors: [Colors.brown, Colors.black, Colors.brown[200]!],
+      colors: [
+        const Color(0xFF795548),
+        const Color(0xFF1E1E1E),
+        const Color(0xFFD7CCC8)
+      ],
       discountPercentage: 20,
+      specifications: [
+        'Genuine leather',
+        'Laptop compartment',
+        'Water resistant',
+        'Multiple pockets',
+        'Adjustable straps',
+        'Anti-theft design'
+      ],
     ),
     Product(
       id: '5',
       name: 'Wireless Earbuds Pro',
       price: 149.99,
       imageUrl: 'assets/images/earbuds.png',
-      description: 'High-quality wireless earbuds with noise cancellation',
+      description:
+          'High-quality wireless earbuds with active noise cancellation, 24-hour battery life, and crystal-clear sound quality. Perfect for music lovers and professionals.',
       category: 'Electronics',
-      colors: [Colors.white, Colors.black, Colors.blue],
+      colors: [const Color(0xFF1E1E1E), const Color(0xFFFFFFFF)],
       discountPercentage: 25,
+      specifications: [
+        'Active noise cancellation',
+        '24-hour battery life',
+        'Touch controls',
+        'Voice assistant support',
+        'Water resistant',
+        'Bluetooth 5.0'
+      ],
     ),
     Product(
       id: '6',
       name: 'Designer Crossbody Bag',
       price: 199.99,
       imageUrl: 'assets/images/handbag.png',
-      description: 'Elegant designer crossbody bag for everyday use',
+      description:
+          'Elegant designer crossbody bag crafted from premium materials. Features adjustable strap, multiple compartments, and secure closure. Ideal for everyday use.',
       category: 'Fashion',
-      colors: [Colors.brown[100]!, Colors.black, Colors.red],
+      colors: [
+        const Color(0xFFD7CCC8),
+        const Color(0xFF1E1E1E),
+        const Color(0xFFD32F2F)
+      ],
       discountPercentage: 30,
+      specifications: [
+        'Premium materials',
+        'Adjustable strap',
+        'Multiple compartments',
+        'Secure closure',
+        'Inner pockets',
+        'Water resistant'
+      ],
     ),
   ];
 
@@ -366,24 +611,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProductListingScreen(
-                                  categoryId: category.id,
-                                  subcategoryId: '',
-                                  title: category.name,
-                                  products: _latestProducts
-                                      .map((product) => {
-                                            'name': product.name,
-                                            'price': product.price,
-                                            'oldPrice': product.oldPrice,
-                                            'image': product.imageUrl,
-                                            'description': product.description,
-                                            'specs': [
-                                              'Specification 1',
-                                              'Specification 2',
-                                              'Specification 3'
-                                            ],
-                                          })
-                                      .toList(),
+                                builder: (context) => SubcategoriesScreen(
+                                  category: category.name,
                                 ),
                               ),
                             );
@@ -457,11 +686,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           'oldPrice': product.oldPrice,
                                           'image': product.imageUrl,
                                           'description': product.description,
-                                          'specs': [
-                                            'Specification 1',
-                                            'Specification 2',
-                                            'Specification 3'
-                                          ],
+                                          'specs': product.specifications,
                                         })
                                     .toList(),
                               ),
@@ -495,6 +720,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 category: product.category,
                                 subcategory: '',
                                 item: product.name,
+                                imageUrl: product.imageUrl,
+                                price: product.price,
+                                colors: product.colors,
+                                description: product.description,
                               ),
                             ),
                           );
@@ -547,16 +776,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 Positioned(
                   top: 8,
                   right: 8,
-                  child: IconButton(
-                    icon: Icon(
-                      _favoriteStates[product.id] ?? false
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      color: _favoriteStates[product.id] ?? false
-                          ? Colors.red
-                          : Colors.grey,
-                    ),
-                    onPressed: () => _toggleFavorite(product.id),
+                  child: BlocBuilder<WishlistBloc, WishlistState>(
+                    builder: (context, state) {
+                      final isWishlisted =
+                          state.items?.any((item) => item.id == product.id) ??
+                              false;
+                      return IconButton(
+                        icon: Icon(
+                          isWishlisted ? Icons.favorite : Icons.favorite_border,
+                          color: isWishlisted ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: () {
+                          if (isWishlisted) {
+                            final wishlistProduct = state.items
+                                ?.firstWhere((item) => item.id == product.id);
+                            if (wishlistProduct != null) {
+                              context
+                                  .read<WishlistBloc>()
+                                  .add(RemoveFromWishlist(wishlistProduct.id));
+                            }
+                          } else {
+                            context
+                                .read<WishlistBloc>()
+                                .add(AddToWishlist(product));
+                          }
+                        },
+                      );
+                    },
                   ),
                 ),
                 if (product.discountPercentage != null)

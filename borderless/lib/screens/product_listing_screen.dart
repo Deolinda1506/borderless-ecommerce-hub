@@ -55,6 +55,15 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                     category: widget.categoryId,
                     subcategory: widget.subcategoryId,
                     item: product['name'],
+                    imageUrl: product['image'],
+                    price: product['price'].toDouble(),
+                    discountPercentage: product['oldPrice'] != null
+                        ? ((product['oldPrice'] - product['price']) /
+                                product['oldPrice'] *
+                                100)
+                            .roundToDouble()
+                        : null,
+                    description: product['description'],
                   ),
                 ),
               );
@@ -197,7 +206,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                               oldPrice: product['oldPrice'],
                               imageUrl: product['image'],
                               category: widget.categoryId,
-                              colors: [Colors.black],
+                              colors: const [Colors.black],
                             );
                             context
                                 .read<wishlist_bloc.WishlistBloc>()

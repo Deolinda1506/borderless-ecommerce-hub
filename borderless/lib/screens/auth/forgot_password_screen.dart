@@ -154,7 +154,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Color(0xFF21D4B4)),
+                            borderSide:
+                                const BorderSide(color: Color(0xFF21D4B4)),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -196,7 +197,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     disabledBackgroundColor: Colors.black.withOpacity(0.5),
                   ),
                   child: _isLoading
-                      ? SizedBox(
+                      ? const SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(

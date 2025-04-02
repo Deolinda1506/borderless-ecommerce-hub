@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../models/cart_item.dart';
 import 'package:flutter/material.dart';
 import '../../models/product.dart';
 
@@ -16,14 +15,14 @@ class AddToCart extends CartEvent {
   final Product product;
   final int quantity;
   final String selectedSize;
-  final Color selectedColor;
+  final Color? selectedColor;
   final String imageUrl;
 
   const AddToCart({
     required this.product,
     required this.quantity,
     required this.selectedSize,
-    required this.selectedColor,
+    this.selectedColor,
     required this.imageUrl,
   });
 

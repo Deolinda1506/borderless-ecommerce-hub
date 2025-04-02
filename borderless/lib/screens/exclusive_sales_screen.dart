@@ -9,8 +9,8 @@ class ExclusiveSalesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Product> _products = [
-      Product(
+    final List<Product> products = [
+      const Product(
         id: '1',
         name: 'Loop silicone strong',
         price: 15.25,
@@ -20,7 +20,7 @@ class ExclusiveSalesScreen extends StatelessWidget {
         category: 'Headphones',
         colors: [Colors.blue, Colors.green, Colors.purple],
       ),
-      Product(
+      const Product(
         id: '2',
         name: 'K800 Ultra smart watch',
         price: 32.00,
@@ -30,7 +30,7 @@ class ExclusiveSalesScreen extends StatelessWidget {
         category: 'Headphones',
         colors: [Colors.black, Colors.grey, Colors.blue],
       ),
-      Product(
+      const Product(
         id: '3',
         name: 'P47 Wireless headphones',
         price: 35.45,
@@ -40,7 +40,7 @@ class ExclusiveSalesScreen extends StatelessWidget {
         category: 'Headphones',
         colors: [Colors.blue, Colors.red, Colors.black],
       ),
-      Product(
+      const Product(
         id: '4',
         name: 'M6 IP67 headphones',
         price: 12.00,
@@ -50,7 +50,7 @@ class ExclusiveSalesScreen extends StatelessWidget {
         category: 'Headphones',
         colors: [Colors.orange, Colors.grey, Colors.black],
       ),
-      Product(
+      const Product(
         id: '5',
         name: 'D20 bluetooth smart h...',
         price: 25.25,
@@ -60,7 +60,7 @@ class ExclusiveSalesScreen extends StatelessWidget {
         category: 'Headphones',
         colors: [Colors.blue, Colors.purple],
       ),
-      Product(
+      const Product(
         id: '6',
         name: 'D18s Smart headphones',
         price: 17.15,
@@ -125,7 +125,7 @@ class ExclusiveSalesScreen extends StatelessWidget {
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                    final product = _products[index];
+                    final product = products[index];
                     return GestureDetector(
                       onTap: () {
                         // Navigate to product details
@@ -168,20 +168,21 @@ class ExclusiveSalesScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Row(
-                            children: product.colors.map((color) {
-                              return Container(
-                                width: 16,
-                                height: 16,
-                                margin: const EdgeInsets.only(right: 4),
-                                decoration: BoxDecoration(
-                                  color: color,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.grey.shade200,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+                            children: product.colors?.map((color) {
+                                  return Container(
+                                    width: 16,
+                                    height: 16,
+                                    margin: const EdgeInsets.only(right: 4),
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.grey.shade200,
+                                      ),
+                                    ),
+                                  );
+                                }).toList() ??
+                                [],
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -219,7 +220,7 @@ class ExclusiveSalesScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  childCount: _products.length,
+                  childCount: products.length,
                 ),
               ),
             ),
