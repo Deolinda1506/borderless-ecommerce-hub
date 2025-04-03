@@ -186,7 +186,6 @@ lib/
 5. Open a Pull Request
 
 
-
 ## Acknowledgments
 
 - Flutter team for the amazing framework
