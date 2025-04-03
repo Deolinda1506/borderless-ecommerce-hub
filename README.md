@@ -9,7 +9,7 @@ Borderless is a modern, cross-platform e-commerce application built with Flutter
   - Product search
   - Detailed product views
   - Product filtering and sorting
-
+    
 - 🛒 **Shopping Cart**
   - Add/remove items
   - Update quantities
